@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles/style.css">
+    <title><%= title %></title>
+</head>
+<body x-data="{}" class="bg-gray-100">
+    <%- include('./nav.ejs') %> 
+    <div class="w-100 rounded-sm p-2 text-white" x-bind:class="$store.global.flashClass" x-show="$store.global.isFlash">
+        <ul>
+            <template x-for="(value, index) in $store.global.flashData">
+                <li x-text="value"></li>
+            </template>
+        </ul>
+    </div>

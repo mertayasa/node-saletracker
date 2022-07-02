@@ -1,0 +1,23 @@
+version: '3'
+services:
+  base:
+    image: node:16
+    volumes:
+      - .:/usr/src/service/
+    working_dir: /usr/src/service/
+    restart: unless-stopped
+    stdin_open: true # Used to allow the container to be executed with a tty (docker exec)
+    container_name: node-saletracker
+    ports:
+      - 8084:3000
+
+#  front:
+#    image: node:16
+#    volumes:
+#      - ./frontend:/usr/src/frontend/
+#    working_dir: /usr/src/frontend/
+#    restart: unless-stopped
+#    stdin_open: true # Used to allow the container to be executed with a tty (docker exec)
+#    container_name: nodefront
+#    ports:
+#      - 8082:8082

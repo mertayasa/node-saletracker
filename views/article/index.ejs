@@ -1,0 +1,45 @@
+<%- include('../partials/header.ejs') %> 
+    
+    <h1>This page is <%= title %> </h1>
+    <a href="/article/create">New Article</a>
+    <h4 class="text-5xl text-red-200">List of article using ejs (from mongo atlas) : </h4>
+    <h4 class="text-gray-400" x-text="$store.article.header"></h4>
+
+    <% if(articles.length > 0) { %>
+        <% articles.forEach(function(item) { %>
+            <img src="<%= item.thumbnail %> " alt="<%= item.title %>" srcset="" width="100px">
+            <h3><%= item.title %></h3>
+            <small><%= item?.createdAt ?? new Date().toLocaleDateString("id-ID") %> </small>
+            <p><%= item.body %> </p>
+            <small> <i> <b> Author: <%= item.author %> </b></i></small> <br>
+            <a href="/article/edit/<%= item._id %> ">Edit</a>
+            <button onclick="deleteArticle('<%= item._id %>')">Delete</button>
+            <hr>
+        <% }); %>
+    <% }else{ %>
+        <h3>No Article</h3> 
+    <% } %>
+
+<%- include('../partials/globalJs.ejs') %> 
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.store('article', {
+            header: "Just an alpine hanging out",
+        })
+    })
+
+    function deleteArticle(id) {
+        fetch('/article/delete/' + id, {
+            method: 'DELETE'
+        })
+        .then(res => res.json())
+        .then(res => {
+            if(res.code == 1){
+                window.location.href = '/article'
+            }else{
+                console.log(res.message);
+            }
+        })
+    }
+</script>
+</html>

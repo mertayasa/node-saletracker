@@ -1,0 +1,71 @@
+<%- include('../partials/header.ejs') %>
+
+    <h1>Edit article</h1>
+    <form>
+        <label for="title">Title</label> <br>
+        <input type="text" name="title" value="" x-model="$store.article.article.title" id="title" /> <br>
+
+        <label for="author">Author</label> <br>
+        <input type="text" name="author" value="" x-model="$store.article.article.author" id="author" /> <br>
+
+        <label for="body">Body</label> <br>
+        <textarea name="body" id="body" cols="30" x-model="$store.article.article.body" rows="10"></textarea> <br>
+
+        <label for="thumbnail">Thumbnail</label> <br>
+        <img :src="$store.article.article.thumbnail ?? '/images/logo.png'" alt="" srcset="" width="100px">
+        <input type="file" name="thumbnail" id="thumbnail" /> <br> <br>
+        <div class="action-button">
+            <a href="/article" class="h-100 bg-gray-500 text-white hover:bg-gray-600 font-bold text-xs px-4 py-2 rounded shadow hover:shadow-lg mr-1 transition">KEMBALI</a>
+            <button type="submit" class="h-100 bg-pink-500 text-white hover:bg-pink-600 font-bold text-xs px-4 py-2 rounded shadow hover:shadow-lg mr-1 transition">UPDATE DATA</button>
+        </div>
+    </form>
+
+<%- include('../partials/globalJs.ejs') %> 
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.store('article', {
+            id: '<%= article?._id %>',
+            article : {},
+
+            init(){
+                fetch('/article/find/' + this.id)
+                .then(res => res.json())
+                .then(res => {
+                    if(res.code == 1){
+                        this.article = res.article
+                    }else{
+                        Alpine.store('global').showFlash(res.message, 'error')
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                    Alpine.store('global').showFlash('Something went wrong!', 'error')
+                })
+            }
+        })
+    })
+
+    const form = document.querySelector('form')
+    form.addEventListener('submit', function(e) {
+        e.preventDefault()
+        const formData = new FormData(e.target)
+
+        fetch('/article/update/<%= article._id %> ', {
+            method: 'PATCH',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(res => {
+            if(res.code == 1){
+                window.location.href = '/article'
+            }else{
+                console.log(res.message);
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            Alpine.store('global').showFlash('Something went wrong!', 'error')
+        })
+    })
+</script>
+</html>

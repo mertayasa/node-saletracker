@@ -1,0 +1,102 @@
+<%- include('../partials/header.ejs') %> 
+    
+    <h1>This page is <%= title %> </h1>
+    <a href="/article/create">New Article</a>
+    <h4 class="text-5xl text-red-200">List of article using ejs (from mongo atlas) : </h4>
+    <h4 class="text-gray-400" x-text="$store.article.header"></h4>
+
+    <% if(articles.length > 0) { %>
+        <% articles.forEach(function(item) { %>
+            <img src="<%= item.thumbnail %> " alt="<%= item.title %>" srcset="" width="100px">
+            <h3><%= item.title %></h3>
+            <small><%= item?.createdAt ?? new Date().toLocaleDateString("id-ID") %> </small>
+            <p><%= item.body %> </p>
+            <small> <i> <b> Author: <%= item.author %> </b></i></small> <br>
+            <a href="/article/edit/<%= item._id %> ">Edit</a>
+            <button onclick="deleteArticle('<%= item._id %>')">Delete</button>
+            <hr>
+        <% }); %>
+    <% }else{ %>
+        <h3>No Article</h3> 
+    <% } %>
+
+    <% if (pages > 0) { %>
+        <ul class="pagination text-center">
+            <% if (current == 1) { %>
+                <li class="disabled"><a>Previous</a></li>
+            <% } else { %>
+                <li><a href="/article/paginate?page=<%= current - 1 %> ">Previous</a></li>
+            <% } %>
+            <% var i = (Number(current) > 5 ? Number(current) - 4 : 1) %>
+            <% if (i !== 1) { %>
+                <li><a href="/article/paginate?page=<%= 1 %>"><%= 1 %></a></li>
+                <li class="disabled"><a>...</a></li>
+            <% } %>
+            
+            <% for (; i <= (Number(current) + 4) && i <= pages; i++) { %>
+                <% if (i == current) { %>
+                    <li class="active"><a><%= i %></a></li>
+                <% } else { %>
+                    <li><a href="/article/paginate?page=<%= i %>"><%= i %></a></li>
+                <% } %>
+                <% if (i == Number(current) + 4 && i < pages) { %>
+                    <li class="disabled"><a>...</a></li>
+                    <li><a href="/article/paginate?page=<%= pages %>"><%= pages %></a></li>
+                <% } %>
+            <% } %>
+
+            <% if (current == pages) { %>
+                <li class="disabled"><a>Next</a></li>
+            <% } else { %>
+                <li><a href="/article/paginate?page=<%= current + 1 %>">Next</a></li>
+            <% } %>
+        </ul>
+    <% } %>
+
+    <ul class="inline-flex -space-x-px">
+        <li>
+          <a href="#" class="py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
+        </li>
+        <li>
+          <a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a>
+        </li>
+        <li>
+          <a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">2</a>
+        </li>
+        <li>
+          <a href="#" aria-current="page" class="py-2 px-3 text-blue-600 bg-blue-50 border border-gray-300 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">3</a>
+        </li>
+        <li>
+          <a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">4</a>
+        </li>
+        <li>
+          <a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">...</a>
+        </li>
+        <li>
+          <a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
+        </li>
+    </ul>
+
+<%- include('../partials/globalJs.ejs') %> 
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.store('article', {
+            header: "Just an alpine hanging out",
+        })
+    })
+
+    function deleteArticle(id) {
+        fetch('/article/delete/' + id, {
+            method: 'DELETE'
+        })
+        .then(res => res.json())
+        .then(res => {
+            if(res.code == 1){
+                window.location.href = '/article'
+            }else{
+                console.log(res.message);
+            }
+        })
+    }
+</script>
+</html>

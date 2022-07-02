@@ -1,0 +1,47 @@
+<%- include('../partials/header.ejs') %> 
+<body x-data="{}">
+    <h1>This page is <%= title %> </h1>
+    <h3>Your app env is <%= appEnv %> </h3>
+    <h4>List of article using ejs : </h4>
+
+    <% if(article.length > 0) { %>
+        <% article.forEach(function(item) { %>
+            <h3><%= item.title %></h3>
+            <small><%= item?.createdAt ?? new Date().toLocaleDateString("id-ID") %> </small>
+            <p><%= item.body %> </p>
+            <small> <i> <b> Author: <%= item.author %> </b></i></small>
+            <hr>
+        <% }); %>
+    <% }else{ %>
+        <h3>No Article</h3> 
+    <% } %>
+
+    <hr>
+    <hr>
+    <hr>
+
+    <h4>List of article using alpine : </h4>
+    <template x-show="$store.home.articles.length < 1">
+        <h3>No Article</h3>
+    </template>
+    <template x-for="(article, index) in $store.home.articles">
+        <div>
+            <h3 x-text="article.title" class="text-center"></h3>
+            <small x-text="article.createdAt ?? new Date().toLocaleDateString('id-ID')" class="text-center"></small>
+            <p x-text="article.body" class="text-center"></p>
+            <small> <i> <b> Author: <span x-text="article.author" class="text-center"></span> </b></i> </small>
+            <hr>
+        </div>
+    </template>
+    
+</body>
+
+<script defer src="https://unpkg.com/alpinejs@3.10.2/dist/cdn.min.js"></script>
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.store('home', {
+            articles: JSON.parse('<%- JSON.stringify(article) %>'),
+        })
+    })
+</script>
+</html>
