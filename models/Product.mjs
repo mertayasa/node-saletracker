@@ -11,10 +11,12 @@ const productSchema = new Schema({
         type: Number,
         required: true
     },
-    categoryId: {
-        type: String,
-        required: true
-    },
+    categories: [
+        {
+            type:mongoose.Schema.Types.ObjectId,
+            ref:'ProductCategory',
+        }
+    ],
     status: {
         type: Boolean,
         required: true

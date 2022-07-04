@@ -5,8 +5,9 @@ import bodyParser from 'body-parser'
 
 // Import Router
 import AuthRouter from './routes/AuthRouter.mjs'
-import ApiRouter from './routes/ApiRouter.mjs'
 import ProductRouter from './routes/ProductRouter.mjs'
+import ProductCategoryRouter from './routes/ProductCategoryRouter.mjs'
+import log from './config/winston.mjs'
 
 global.myvar = 100;
 
@@ -17,7 +18,10 @@ const dbURI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}
 // Connect to MongoDB
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(() => app.listen(process.env.PORT))
-	.catch(err => console.log(err))
+	.catch(err => {
+		log.info('database connection error')
+		log.error(err)
+	})
 
 // Middleware
 app.use(express.static('public'))
@@ -30,9 +34,9 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.use('/api', ApiRouter)
-app.use('/auth', AuthRouter)
-app.use('/product', ProductRouter)
+app.use('/api/auth', AuthRouter)
+app.use('/api/product', ProductRouter)
+app.use('/api/product-category', ProductCategoryRouter)
 
 // 404 Not Found
 app.use((req, res, next) => {

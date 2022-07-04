@@ -23,7 +23,7 @@ for (let i = 0; i < 10; i++) {
     seedProduct.push({
         title: `Product ${faker.word.adjective()}`,
         price: faker.random.numeric(4),
-        categoryId: await productId,
+        categories: [await productId],
         status: true
     })
 }

@@ -16,6 +16,6 @@ const productCategorySchema = new Schema({
     timestamps: true
 })
 
-const ProductCategory = mongoose.model("product_categories", productCategorySchema)
+const ProductCategory = mongoose.model("ProductCategory", productCategorySchema)
 
 export default ProductCategory
